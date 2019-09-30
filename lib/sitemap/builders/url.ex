@@ -183,7 +183,13 @@ defmodule Sitemap.Builders.Url do
 
     attrs = %{rel: rel, href: data[:href]}
     attrs = Map.put(attrs, :hreflang, data[:lang])
-    attrs = Map.put(attrs, :media, data[:media])
+
+    attrs =
+      if data[:media] do
+        Map.put(attrs, :media, data[:media])
+      else
+        attrs
+      end
 
     alternates(tail, elements ++ [element(:"xhtml:link", attrs)])
   end

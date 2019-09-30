@@ -409,6 +409,32 @@ defmodule Sitemap.BuildersUrlTest do
     assert xpath(parsed, ~x"//xhtml:link/@rel") == 'alternate nofollow'
   end
 
+  test "Alternates sitemap url without media attribute" do
+    data = [
+      alternates: [
+        href: "http://www.example.de/index.html",
+        lang: "de",
+        nofollow: true
+      ]
+    ]
+
+    actual =
+      Url.to_xml("/video.html", data)
+      |> XmlBuilder.generate()
+
+    parsed = parse(actual)
+    assert xpath(parsed, ~x"//loc/text()") == 'http://www.example.com/video.html'
+    assert xpath(parsed, ~x"//lastmod/text()") != nil
+    assert xpath(parsed, ~x"//expires/text()") == nil
+    assert xpath(parsed, ~x"//changefreq/text()") == nil
+    assert xpath(parsed, ~x"//priority/text()") == nil
+
+    assert xpath(parsed, ~x"//xhtml:link/@media") == nil
+    assert xpath(parsed, ~x"//xhtml:link/@href") == 'http://www.example.de/index.html'
+    assert xpath(parsed, ~x"//xhtml:link/@hreflang") == 'de'
+    assert xpath(parsed, ~x"//xhtml:link/@rel") == 'alternate nofollow'
+  end
+
   test "Multiple alternates sitemap url" do
     data = [
       alternates: [
